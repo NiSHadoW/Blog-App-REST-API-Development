@@ -17,6 +17,7 @@ A **Role-Based Blog Management REST API** built with Node.js, Express, and MySQL
 - [Role-Based Access Matrix](#role-based-access-matrix)
 - [HTTP Status Codes](#http-status-codes)
 - [Testing](#testing)
+- [Postman Documentation](#postman-documentation)
 
 ## Tech Stack
 
@@ -304,3 +305,11 @@ collection/Blog App REST API Development.postman_collection.json
 ```
 
 Import it into Postman, set the `baseURL` collection variable to your running server's URL (default `http://localhost:5000`), and run the requests in order — the collection auto-chains tokens and IDs between requests using Postman's pre-request and test scripts.
+
+## Postman documentation
+
+A postman documentation is included here
+
+```
+https://documenter.getpostman.com/view/47007261/2sBYAuTBmd
+```
