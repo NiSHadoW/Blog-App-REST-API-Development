@@ -1,0 +1,1791 @@
+{
+  "info": {
+    "_postman_id": "b09e78b1-46d9-4b5f-a2cc-2956f4704ccd",
+    "name": "Blog App REST API Development",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "47007261",
+    "_collection_link": "https://go.postman.co/collection/47007261-b09e78b1-46d9-4b5f-a2cc-2956f4704ccd?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "// const res = pm.response.json();\r\n// const admin_token = res.token;\r\n\r\n// pm.collectionVariables.set(\"admin_token\", admin_token);\r\n\r\nconst res = pm.response.json();\r\npm.collectionVariables.set(\"admin_token\", res.data.token);\r\n\r\npm.test(\"Verify if the admin is logged in\",()=>{\r\n    pm.expect(res.message).to.eql(\"Login successful!\");\r\n})\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"admin@test.com\",\r\n  \"password\": \"admin1234\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/auth/login",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register User01",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if registration is successful with valid required fields\",()=>{\r\n    pm.expect(res.message).to.eql(\"User created successfully\");\r\n})\r\n\r\npm.test(\"Status code is 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const lodash = require('lodash');\r\n\r\nconst randomNumber = lodash.random(1000, 9999);\r\nconst email = \"user\" + randomNumber + \"@test.com\";\r\nconst password = \"pass\" + randomNumber + \"!\";\r\n\r\npm.collectionVariables.set(\"user01_email\", email);\r\npm.collectionVariables.set(\"user01_password\", password);\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"firstname\": \"{{$randomFirstName}}\",\r\n  \"lastname\": \"{{$randomLastName}}\",\r\n  \"email\": \"{{user01_email}}\",\r\n  \"password\": \"{{user01_password}}\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/auth/register",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login User01",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\npm.collectionVariables.set(\"user01_token\", res.data.token);\npm.collectionVariables.set(\"user01_id\", res.data.user.id);\n\npm.test(\"Check if user01 can login successfully\",()=>{\n    pm.expect(res.message).to.eql(\"Login successful!\");\n})\n\npm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"{{user01_email}}\",\r\n  \"password\": \"{{user01_password}}\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/auth/login",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register User Duplicate Users",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if user can register with duplicate email\",()=>{\r\n    pm.expect(res.message).to.eql(\"User already exists!\");\r\n})\r\n\r\npm.test(\"Status code is 409\", function () {\r\n    pm.response.to.have.status(409);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"firstname\": \"{{$randomFirstName}}\",\r\n  \"lastname\": \"{{$randomLastName}}\",\r\n  \"email\": \"{{user01_email}}\",\r\n  \"password\": \"{{user01_password}}\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/auth/register",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register User with Invalid Input",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if user can register without required fields\",()=>{\r\n    pm.expect(res.message).to.eql(\"Firstname, lastname, email and password is required\");\r\n})\r\n\r\npm.test(\"Status code is 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  ""
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{ \r\n  \"firstname\": \"\",\r\n  \"lastname\": \"Test\",\r\n  \"email\": \"invalidtest@test.com\",\r\n  \"password\": \"password123\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/auth/register",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register User with Invalid Pass",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if user can register with invalid password\",()=>{\r\n    pm.expect(res.message).to.eql(\"Password must be at least 8 characters\");\r\n})\r\n\r\npm.test(\"Status code is 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  ""
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"firstname\": \"{{$randomFirstName}}\",\r\n  \"lastname\": \"{{$randomLastName}}\",\r\n  \"email\": \"abc@test.com\",\r\n  \"password\": \"hi1234\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/auth/register",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Register User02",
+          "event": [
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const lodash = require('lodash');\r\n\r\nconst randomNumber = lodash.random(1000, 9999);\r\nconst email = \"user\" + randomNumber + \"@test.com\";\r\nconst password = \"pass\" + randomNumber + \"!\";\r\n\r\npm.collectionVariables.set(\"user02_email\", email);\r\npm.collectionVariables.set(\"user02_password\", password);\r\n"
+                ]
+              }
+            },
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if registration is successful with valid required fields\",()=>{\r\n    pm.expect(res.message).to.eql(\"User created successfully\");\r\n})\r\n\r\npm.test(\"Status code is 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"firstname\": \"{{$randomFirstName}}\",\r\n  \"lastname\": \"{{$randomLastName}}\",\r\n  \"email\": \"{{user02_email}}\",\r\n  \"password\": \"{{user02_password}}\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/auth/register",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "auth",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login User02",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\npm.collectionVariables.set(\"user02_token\", res.data.token);\npm.collectionVariables.set(\"user02_id\", res.data.user.id);\n\npm.test(\"Check if user01 can login successfully\",()=>{\n    pm.expect(res.message).to.eql(\"Login successful!\");\n})\n\npm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"{{user02_email}}\",\r\n  \"password\": \"{{user02_password}}\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/auth/login",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login User Invalid Creds",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if user can login with wrong credentials\",()=>{\r\n    pm.expect(res.message).to.eql(\"Invalid credentials\");\r\n})\r\n\r\npm.test(\"Status code is 401\", function () {\r\n    pm.response.to.have.status(401);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"{{user01_email}}\",\r\n  \"password\": \"jklkhkjhjkjkbjhgbhj\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/auth/login",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Users",
+      "item": [
+        {
+          "name": "Get Profile by User01",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if user01 can fetch its own user profile\",()=>{\r\n    pm.expect(res.message).to.eql(\"Profile fetched successfully\");\r\n})\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user01_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/users/profile",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "profile"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Own Profile User01",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if user01 can update its own user profile\",()=>{\r\n    pm.expect(res.message).to.eql(\"Profile updated successfully\");\r\n})\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user01_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"firstname\": \"{{$randomFirstName}}\",\r\n  \"lastname\": \"{{$randomLastName}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/profile/update",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "profile",
+                "update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User01  Profile without Auth Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if user01 can update its own user profile without authorization token\",()=>{\r\n    pm.expect(res.message).to.eql(\"Auth token is required\");\r\n})\r\n\r\npm.test(\"Status code is 401\", function () {\r\n    pm.response.to.have.status(401);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"firstname\": \"{{$randomFirstName}}\",\r\n  \"lastname\": \"{{$randomLastName}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/profile/update",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "profile",
+                "update"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update User01 Password",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n//pm.collectionVariables.set(\"user01_newpassword\", res.password);\r\n\r\npm.test(\"Check if user01 can update its own password\",()=>{\r\n    pm.expect(res.message).to.eql(\"Password updated successfully\");\r\n})\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const lodash = require('lodash');\r\n\r\nconst randomNumber = lodash.random(1000, 9999);\r\nconst newpassword = \"pass\" + randomNumber + \"!\";\r\n\r\npm.collectionVariables.set(\"user01_newpassword\", newpassword);  \r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user01_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"password\": \"{{user01_newpassword}}\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/password",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "password"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login User01 New Pass",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\n//pm.collectionVariables.set(\"user01_token\", res.data.token);\n\npm.test(\"Check if user01 can login with new password successfully\",()=>{\n    pm.expect(res.message).to.eql(\"Login successful!\");\n})\n\npm.test(\"Status code is 200\", function () {\n    pm.response.to.have.status(200);\n});\n\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"{{user01_email}}\",\r\n  \"password\": \"{{user01_newpassword}}\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/auth/login",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Users by Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Verify if the admin can view all users\",()=>{\r\n    pm.expect(res.message).to.eql(\"Users fetched successfully\");\r\n})\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "text"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Users by Usre01",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Verify if the user01 can view all users\",()=>{\r\n    pm.expect(res.message).to.eql(\"Access denied. Admins only.\");\r\n})\r\n\r\npm.test(\"Status code is 403\", function () {\r\n    pm.response.to.have.status(403);\r\n});"
+                ]
+              }
+            }
+          ],
+          "protocolProfileBehavior": {
+            "disableBodyPruning": true
+          },
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user01_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "",
+              "options": {
+                "raw": {
+                  "language": "text"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User by ID (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Verify if the admin can view users by ID\",()=>{\r\n    pm.expect(res.message).to.eql(\"User fetched successfully\");\r\n})\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/users/{{user01_id}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "{{user01_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User by Wrong ID (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Verify if the admin can find user with wrong user ID\",()=>{\r\n    pm.expect(res.message).to.eql(\"User not found\");\r\n})\r\n\r\npm.test(\"Status code is 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/users/20000",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "20000"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get User by Invalid ID (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Verify if the admin can find user with invalid ID\",()=>{\r\n    pm.expect(res.message).to.eql(\"Invalid user id\");\r\n})\r\n\r\npm.test(\"Status code is 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/users/abc",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "abc"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change User02 Status (without Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if admin can change user02 status without admin token\",()=>{\r\n    pm.expect(res.message).to.eql(\"Auth token is required\");\r\n})\r\n\r\npm.test(\"Status code is 401\", function () {\r\n    pm.response.to.have.status(401);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"isActive\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/{{user02_id}}/status",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "{{user02_id}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change User02 Status (Admin)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if admin can change user02 status\",()=>{\r\n    pm.expect(res.message).to.eql(\"User status updated successfully\");\r\n})\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"isActive\": false\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/{{user02_id}}/status",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "{{user02_id}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Login User02 New Status",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\n\npm.test(\"Check if user02 can login after account deactivation\",()=>{\n    pm.expect(res.message).to.eql(\"Your account has been deactivated\");\n})\n\npm.test(\"Status code is 403\", function () {\n    pm.response.to.have.status(403);\n});\n\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"email\": \"{{user02_email}}\",\r\n  \"password\": \"{{user02_password}}\"\r\n}\r\n",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/auth/login",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "auth",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Revert User02 Status (Admin)",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"isActive\": true\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/{{user02_id}}/status",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "{{user02_id}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Change User Status Invalid",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if admin can change user02 status with invalid input\",()=>{\r\n    pm.expect(res.message).to.eql(\"isActive must be a boolean\");\r\n})\r\n\r\npm.test(\"Status code is 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"isActive\": \"false\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/users/{{user02_id}}/status",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "users",
+                "{{user02_id}}",
+                "status"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Blogs",
+      "item": [
+        {
+          "name": "Create Blog User01",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\npm.collectionVariables.set(\"blogID01_1\", res.data.id);\r\n\r\npm.test(\"Check if user01 can create blogs successfully\",()=>{\r\n    pm.expect(res.message).to.eql(\"Blog created successfully\");\r\n})\r\n\r\npm.test(\"Status code is 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user01_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"blogTitle\": \"Introduction to API Testing\",\r\n  \"blog\": \"This article explains the fundamentals of API testing...\",\r\n  \"category\": \"Testing\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/blogs/create",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "blogs",
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Blog User02",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\npm.collectionVariables.set(\"blogID02_1\", res.data.id);\r\n\r\npm.test(\"Check if user02 can create blogs successfully\",()=>{\r\n    pm.expect(res.message).to.eql(\"Blog created successfully\");\r\n})\r\n\r\npm.test(\"Status code is 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user02_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"blogTitle\": \"Introduction to REST API\",\r\n  \"blog\": \"This article explains the fundamentals of REST API ...\",\r\n  \"category\": \"Testing\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/blogs/create",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "blogs",
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Blog Missing Required Fields",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if users can create blogs with missing requred fields\",()=>{\r\n    pm.expect(res.message).to.eql(\"blogTitle, blog and category are required\");\r\n})\r\n\r\npm.test(\"Status code is 400\", function () {\r\n    pm.response.to.have.status(400);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user02_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"blogTitle\": \"\",\r\n  \"blog\": \"This article explains the fundamentals of REST API ...\",\r\n  \"category\": \"Testing\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/blogs/create",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "blogs",
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create Blog Without Auth Token",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if users can create blogs with missing authorization token\",()=>{\r\n    pm.expect(res.message).to.eql(\"Auth token is required\");\r\n})\r\n\r\npm.test(\"Status code is 401\", function () {\r\n    pm.response.to.have.status(401);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"blogTitle\": \"Introduction to REST API\",\r\n  \"blog\": \"This article explains the fundamentals of REST API ...\",\r\n  \"category\": \"Testing\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/blogs/create",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "blogs",
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get All Blogs (All)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if every users can view all blogs\",()=>{\r\n    pm.expect(res.message).to.eql(\"Blogs fetched successfully\");\r\n})\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/blogs",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "blogs"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Blogs by blogID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if guests can view blogs with blogID\",()=>{\r\n    pm.expect(res.message).to.eql(\"Blog fetched successfully\");\r\n})\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/blogs/{{blogID01_1}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "blogs",
+                "{{blogID01_1}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Get Blogs by Invalid blogID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if guests can view blogs with invalid blogId\",()=>{\r\n    pm.expect(res.message).to.eql(\"Blog not found\");\r\n})\r\n\r\npm.test(\"Status code is 404\", function () {\r\n    pm.response.to.have.status(404);\r\n});\r\n\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/blogs/{{user01_id}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "blogs",
+                "{{user01_id}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create New Blog User01",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\npm.collectionVariables.set(\"blogID01_2\", res.data.id);\r\n\r\npm.test(\"Check if user01 can create blogs successfully\",()=>{\r\n    pm.expect(res.message).to.eql(\"Blog created successfully\");\r\n})\r\n\r\npm.test(\"Status code is 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user01_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"blogTitle\": \"Introduction to C Programming\",\r\n  \"blog\": \"This article explains the fundamentals of C Programming...\",\r\n  \"category\": \"Programming\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/blogs/create",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "blogs",
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Create New Blog User02",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\npm.collectionVariables.set(\"blogID02_2\", res.data.id);\r\n\r\npm.test(\"Check if user02 can create blogs successfully\",()=>{\r\n    pm.expect(res.message).to.eql(\"Blog created successfully\");\r\n})\r\n\r\npm.test(\"Status code is 201\", function () {\r\n    pm.response.to.have.status(201);\r\n});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user02_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"blogTitle\": \"Introduction to Java Programming\",\r\n  \"blog\": \"This article explains the fundamentals of Java Programming ...\",\r\n  \"category\": \"Programming\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/blogs/create",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "blogs",
+                "create"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Blogs by Full Title",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if everyone can search blogs with blog title\",()=>{\r\n    pm.expect(res.message).to.eql(\"Blogs fetched successfully\");\r\n})\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/blogs?title=Introduction to API Testing",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "blogs"
+              ],
+              "query": [
+                {
+                  "key": "title",
+                  "value": "Introduction to API Testing"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Search Blogs by Title (Partial)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if everyone can partial search blogs with blog title\",()=>{\r\n    pm.expect(res.message).to.eql(\"Blogs fetched successfully\");\r\n})\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/blogs?title=API",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "blogs"
+              ],
+              "query": [
+                {
+                  "key": "title",
+                  "value": "API"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Filter Blog Category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if everyone can filter blogs with blog category\",()=>{\r\n    pm.expect(res.message).to.eql(\"Blogs fetched successfully\");\r\n})\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/blogs?category=Programming",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "blogs"
+              ],
+              "query": [
+                {
+                  "key": "category",
+                  "value": "Programming"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Filter Title & Category",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if everyone can filter blogs with blog title and category\",()=>{\r\n    pm.expect(res.message).to.eql(\"Blogs fetched successfully\");\r\n})\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseURL}}/blogs?title=API&category=Testing",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "blogs"
+              ],
+              "query": [
+                {
+                  "key": "title",
+                  "value": "API"
+                },
+                {
+                  "key": "category",
+                  "value": "Testing"
+                }
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Blog User01",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if user01 can update own blogs with blogId\",()=>{\r\n    pm.expect(res.message).to.eql(\"Blog updated successfully\");\r\n})\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user01_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"blogTitle\": \"Updated Blog Title of User01\",\r\n  \"blog\": \"Updated blog content of User01\",\r\n  \"category\": \"Testing\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/blogs/update/{{blogID01_1}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "blogs",
+                "update",
+                "{{blogID01_1}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Blog User02 by User01",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if user01 can update user02 blogs\",()=>{\r\n    pm.expect(res.message).to.eql(\"You are not authorized to update this blog.\");\r\n})\r\n\r\npm.test(\"Status code is 403\", function () {\r\n    pm.response.to.have.status(403);\r\n});\r\n\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user01_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"blogTitle\": \"Trying to update Blog Title of User02 by User01\",\r\n  \"blog\": \"Trying to update blog content of User01_1\",\r\n  \"category\": \"Testing\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/blogs/update/{{blogID02_1}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "blogs",
+                "update",
+                "{{blogID02_1}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Update Any Blog by Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if admin can update any blogs\",()=>{\r\n    pm.expect(res.message).to.eql(\"Blog updated successfully\");\r\n})\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n  \"blogTitle\": \"Updated Blog Title of User02 by Admin\",\r\n  \"blog\": \"Updated blog content of User02 by Admin\",\r\n  \"category\": \"Testing\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseURL}}/blogs/update/{{blogID02_1}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "blogs",
+                "update",
+                "{{blogID02_1}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Blogs of User02 by User01",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if user01 can delete blogs of user02\",()=>{\r\n    pm.expect(res.message).to.eql(\"You are not authorized to delete this blog.\");\r\n})\r\n\r\npm.test(\"Status code is 403\", function () {\r\n    pm.response.to.have.status(403);\r\n});\r\n\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user01_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/blogs/delete/{{blogID02_2}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "blogs",
+                "delete",
+                "{{blogID02_2}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete Own Blogs User01",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if user01 can delete own blogs\",()=>{\r\n    pm.expect(res.message).to.eql(\"Blog deleted successfully\");\r\n})\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{user01_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/blogs/delete/{{blogID01_2}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "blogs",
+                "delete",
+                "{{blogID01_2}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "Delete User02 Blogs by Admin",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "const res = pm.response.json();\r\n\r\npm.test(\"Check if admin can delete user02 blogs\",()=>{\r\n    pm.expect(res.message).to.eql(\"Blog deleted successfully\");\r\n})\r\n\r\npm.test(\"Status code is 200\", function () {\r\n    pm.response.to.have.status(200);\r\n});\r\n\r\n"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{admin_token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseURL}}/blogs/delete/{{blogID02_2}}",
+              "host": [
+                "{{baseURL}}"
+              ],
+              "path": [
+                "blogs",
+                "delete",
+                "{{blogID02_2}}"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseURL",
+      "value": "http://localhost:5000"
+    },
+    {
+      "key": "admin_token",
+      "value": "{{json_web_token_0c2k}}"
+    },
+    {
+      "key": "user01_email",
+      "value": "user7124@test.com"
+    },
+    {
+      "key": "user01_password",
+      "value": "pass7124!"
+    },
+    {
+      "key": "user01_token",
+      "value": "{{json_web_token_10cq}}"
+    },
+    {
+      "key": "user01_id",
+      "value": 47
+    },
+    {
+      "key": "user02_email",
+      "value": "user3045@test.com"
+    },
+    {
+      "key": "user02_password",
+      "value": "pass3045!"
+    },
+    {
+      "key": "user02_token",
+      "value": "{{json_web_token_19r1}}"
+    },
+    {
+      "key": "user02_id",
+      "value": 48
+    },
+    {
+      "key": "user01_newpassword",
+      "value": "pass9861!"
+    },
+    {
+      "key": "blogID01_1",
+      "value": 39
+    },
+    {
+      "key": "blogID02_1",
+      "value": 40
+    },
+    {
+      "key": "blogID01_2",
+      "value": 41
+    },
+    {
+      "key": "blogID02_2",
+      "value": 42
+    },
+    {
+      "key": "json_web_token_0c2k",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_10cq",
+      "secret": true
+    },
+    {
+      "key": "json_web_token_19r1",
+      "secret": true
+    }
+  ]
+}
