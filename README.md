@@ -310,5 +310,5 @@ Import it into Postman, set the `baseURL` collection variable to your running se
 
 A postman documentation is included here
 
-[Link: ](https://documenter.getpostman.com/view/47007261/2sBYAuTBmd)
+[Click Here](https://documenter.getpostman.com/view/47007261/2sBYAuTBmd)
 
